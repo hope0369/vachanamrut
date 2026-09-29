@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-de89DahmoI4mJK2UX5PUCkVtUs9jW9ern3/7jvYpfFg='; style-src 'sha256-571q3h/Lr5lN/9zTBia4T/tHpxqIH6Dgw+LfgmpvDcA=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-de89DahmoI4mJK2UX5PUCkVtUs9jW9ern3/7jvYpfFg='; style-src 'sha256-iYXTjim9xvoEXVFOXYrjQ3tLMJSekY2RXiR9ciQCArE=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -330,6 +330,8 @@ html{scroll-padding-top:76px;scroll-padding-bottom:calc(var(--nav-h,0px) + env(s
 .clear{min-width:44px;min-height:44px}
 .tool{min-width:44px;height:44px}
 .search input{min-height:44px}
+/* The page heading takes focus after navigation so screen readers announce the page; it needs no visible ring. */
+h1[tabindex="-1"]:focus{outline:none}
 /* Fold-open headings (Key points, Notes, answers, word meanings): a full-height tap row. */
 details > summary{min-height:44px;box-sizing:border-box;padding-block:12px}
 /* Footnote numbers and reference pills keep their look but get a larger invisible tap area. */
