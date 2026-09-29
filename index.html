@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M53vZf051Zmi4Nt3qoTWc3lP6fVifMxvwwfLTWjSLaU='; style-src 'sha256-3Mhv28peqPB98JV7jtp/cuXOs7pzRb8aSuA4cE178zM=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-de89DahmoI4mJK2UX5PUCkVtUs9jW9ern3/7jvYpfFg='; style-src 'sha256-571q3h/Lr5lN/9zTBia4T/tHpxqIH6Dgw+LfgmpvDcA=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -113,9 +113,9 @@ button{font:inherit;color:inherit}
 }
 
 main{padding-block:26px 64px;min-height:60vh}
-h2{font-family:var(--display);font-size:1.75rem;font-weight:700;line-height:1.2;margin:0 0 4px;text-wrap:balance}
-h2 .en{display:block;font-family:var(--sans);font-size:.95rem;font-weight:500;color:var(--muted);margin-top:2px}
-h2 .pre{display:block;font-family:var(--sans);font-size:.85rem;font-weight:500;color:var(--muted)}
+h1,h2{font-family:var(--display);font-size:1.75rem;font-weight:700;line-height:1.2;margin:0 0 4px;text-wrap:balance}
+h1 .en,h2 .en{display:block;font-family:var(--sans);font-size:.95rem;font-weight:500;color:var(--muted);margin-top:2px}
+h1 .pre,h2 .pre{display:block;font-family:var(--sans);font-size:.85rem;font-weight:500;color:var(--muted)}
 .label{font:600 .76rem/1.2 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 .intro{color:var(--muted);margin:0 0 18px;max-width:62ch}
 .section{margin-top:40px}
@@ -319,11 +319,30 @@ footer p{max-width:78ch;margin:0 0 8px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
 
+/* ---------- Accessibility: comfortable tap sizes, focus never hidden under the bars ---------- */
+/* Keyboard focus and in-page jumps stop clear of the sticky top bar and the bottom menu. */
+html{scroll-padding-top:76px;scroll-padding-bottom:calc(var(--nav-h,0px) + env(safe-area-inset-bottom,0px) + 16px)}
+/* 44px tap targets (Apple's guideline; the web minimum is 24px). */
+.act,.chip,.back,.qchips button,.tabs button,.langsw label{min-height:44px;box-sizing:border-box}
+.act{padding:11px 16px}
+.chip{align-items:center;padding-block:10px}
+.back{padding-block:10px}
+.clear{min-width:44px;min-height:44px}
+.tool{min-width:44px;height:44px}
+.search input{min-height:44px}
+/* Fold-open headings (Key points, Notes, answers, word meanings): a full-height tap row. */
+details > summary{min-height:44px;box-sizing:border-box;padding-block:12px}
+/* Footnote numbers and reference pills keep their look but get a larger invisible tap area. */
+sup a,.ref{position:relative}
+sup a::before{content:"";position:absolute;inset:-13px -11px}
+.ref::before{content:"";position:absolute;inset:-9px -2px}
+@media (max-width:760px){.nav a{font-size:.78rem}}
+
 /* ---------- Vachanamrut: discourse page ---------- */
 .disc{max-width:74ch;margin-inline:auto}
 .disc-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin-bottom:10px}
-.disc h2{margin-top:6px}
-.disc h2 .gu-t{display:block}
+.disc h1{margin-top:6px}
+.disc h1 .gu-t{display:block}
 .when{font:.9rem/1.45 var(--sans);color:var(--muted);margin:6px 0 0}
 .tabs{display:inline-flex;flex-wrap:wrap;border:1px solid var(--rule);border-radius:999px;overflow:hidden;font:500 .9rem/1 var(--sans);margin:18px 0 6px}
 .tabs button{border:0;background:transparent;padding:10px 16px;cursor:pointer;color:var(--ink)}
@@ -355,7 +374,7 @@ footer p{max-width:78ch;margin:0 0 8px}
 .drows .snip{display:block;margin-top:6px;font:.95rem/1.5 var(--serif);color:var(--ink)}
 .today .t-title{font:700 1.45rem/1.3 var(--display);margin:4px 0 10px}
 /* Transliterated titles use ṇ, ḍ, ṭ: the heading font lacks them, the reading font has them. */
-body.show-tr .drows b,body.show-tr .today .t-title,body.show-tr .disc h2 .gu-t{font-family:var(--serif);font-weight:600}
+body.show-tr .drows b,body.show-tr .today .t-title,body.show-tr .disc h1 .gu-t{font-family:var(--serif);font-weight:600}
 .today .t-en{font:500 1rem/1.4 var(--sans);color:var(--muted);margin:0 0 10px}
 .today .t-open{font-size:1.1rem;line-height:1.7;margin:0 0 6px}
 .appendix{font:.8rem/1 var(--sans);color:var(--muted);border:1px solid var(--rule);padding:3px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
@@ -694,7 +713,7 @@ function homeView(){
     '<span class="c"' + lgA() + '>' + discCount(s.idxs.length) + '</span></span></a></li>').join('');
   view.innerHTML =
     '<section class="hero plain fade-up" aria-labelledby="greet"><div class="hero-grid solo">' +
-      '<div><h2 class="greet" id="greet" lang="gu">જય સ્વામિનારાયણ</h2><p class="greet-2" lang="gu">દાસના દાસ બનાવશોજી</p>' +
+      '<div><h1 class="greet" id="greet" lang="gu">જય સ્વામિનારાયણ</h1><p class="greet-2" lang="gu">દાસના દાસ બનાવશોજી</p>' +
       '<p class="greet-sub"' + lgA() + '>' + tx('Bhagwan Swaminarayan’s discourses, in Gujarati and English. Read today’s, or open any section below.', 'ભગવાન સ્વામિનારાયણનાં વચનામૃત, ગુજરાતી અને અંગ્રેજીમાં. આજનું વચનામૃત વાંચો, અથવા નીચેથી કોઈ પણ વિભાગ ખોલો.') + '</p>' +
       '<div id="today-slot">' + todayCard() + '</div>' +
       '<button type="button" class="act another" id="another">' + icon('right') + tx('Another Vachanamrut', 'બીજું વચનામૃત') + '</button></div>' +
@@ -730,7 +749,7 @@ function sectionsView(){
     const yrs = [a.date, b.date].map(d => (d || '').slice(0, 4)).filter(Boolean); const span = yrs[0] === yrs[1] ? yrs[0] : yrs.join('–');
     return '<li><a href="#s-' + s.key + '"><span class="num"' + lgA() + '>' + nm(s.idxs.length) + '</span><span><b>' + secTitle(s) + '</b>' +
       '<span class="d-en"' + lgA() + '>' + discCount(s.idxs.length) + (span ? ' · ' + nm(span) : '') + (readCount(s) ? ' · ' + tx(readCount(s) + ' read', toGuNum(readCount(s)) + ' વાંચ્યાં') : '') + '</span></span></a></li>'; }).join('');
-  view.innerHTML = '<h2' + lgA() + '><span>' + tx('Vachanamrut', 'વચનામૃત') + '</span><span class="en">' + tx(V.length + ' discourses in ' + SEC.length + ' sections', toGuNum(SEC.length) + ' વિભાગમાં ' + toGuNum(V.length) + ' વચનામૃત') + '</span></h2>' +
+  view.innerHTML = '<h1' + lgA() + '><span>' + tx('Vachanamrut', 'વચનામૃત') + '</span><span class="en">' + tx(V.length + ' discourses in ' + SEC.length + ' sections', toGuNum(SEC.length) + ' વિભાગમાં ' + toGuNum(V.length) + ' વચનામૃત') + '</span></h1>' +
     '<form class="goto" id="goto-form" autocomplete="off"><label for="goto"' + lgA() + '>' + tx('Go to', 'સીધું ખોલો') + '</label><input id="goto" maxlength="24" placeholder="' + tx('e.g. Gadhada I-1, Loya 7', 'દા.ત. ગઢડા પ્રથમ ૧, લોયા ૭') + '"><button type="submit" class="act primary"' + lgA() + '>' + tx('Open', 'ખોલો') + '</button></form>' +
     '<p class="list-count" id="goto-msg" aria-live="polite"></p><ul class="drows">' + rows + '</ul>';
 }
@@ -738,7 +757,7 @@ function sectionView(key){
   const k = SEC.findIndex(s => s.key === key); if (k < 0){ sectionsView(); return; }
   const s = SEC[k];
   view.innerHTML = '<a class="back" href="#sections"' + lgA() + '>' + icon('left') + tx('Sections', 'વિભાગ') + '</a>' +
-    '<h2>' + secTitle(s) + '<span class="en"' + lgA() + '>' + discCount(s.idxs.length) + '</span></h2>' +
+    '<h1>' + secTitle(s) + '<span class="en"' + lgA() + '>' + discCount(s.idxs.length) + '</span></h1>' +
     (s.appendix ? '<p class="intro"' + lgA() + '>' + tx('An appendix discourse on geography and astronomy, from 1806. It is not counted in the 273.', 'ભૂગોળ અને ખગોળ વિષેનું પરિશિષ્ટ વચનામૃત, ઈ.સ. ૧૮૦૬નું. તે ૨૭૩ માં ગણાતું નથી.') + '</p>' : '') +
     '<ul class="drows">' + s.idxs.map(i => row(V[i])).join('') + '</ul>';
 }
@@ -799,7 +818,7 @@ function discView(key, para, paraLang){
   view.innerHTML = '<article class="disc vat" data-i="' + i + '">' +
     '<div class="disc-top"><a class="back" href="#s-' + s.key + '"' + lgA() + '>' + icon('left') + esc(secName(s)) + '</a></div>' +
     '<div class="vat-head"><a class="ref" href="' + vHref(v) + '"' + lgA() + '>' + esc(refOf(v)) + '</a>' + (s.appendix ? '<span class="appendix"' + lgA() + '>' + tx('Appendix', 'પરિશિષ્ટ') + '</span>' : '') + '</div>' +
-    '<h2><span class="gu-t"' + lgA() + '>' + esc(titleOf(v)) + '</span></h2>' +
+    '<h1><span class="gu-t"' + lgA() + '>' + esc(titleOf(v)) + '</span></h1>' +
     '<p class="when"' + lgA() + '>' + dateLine(v, show === 'gu') + '</p>' + subjectChips(v) +
     '<div class="actions"><button type="button" class="act primary" data-act="share"' + lgA() + '>' + icon('share') + tx('Share', 'મોકલો') + '</button>' + saveBtn(v) + readBtn(v) + '</div>' +
     '<div id="sum-slot">' + summaryHtml(v) + '</div>' +
@@ -819,13 +838,13 @@ function subjectChips(v){
 }
 function subjectsView(){
   const order = SUBJ.map((x, k) => k).sort((a, b) => SUBJ_IDX[b].length - SUBJ_IDX[a].length || SUBJ[a][2].localeCompare(SUBJ[b][2]));
-  view.innerHTML = '<h2' + lgA() + '><span>' + tx('Subjects', 'વિષય') + '</span><span class="en">' + tx(SUBJ.length + ' subjects. Each discourse sits under the two to four it speaks about most.', toGuNum(SUBJ.length) + ' વિષય. દરેક વચનામૃત જે બે થી ચાર વિષય વિષે સૌથી વધુ કહે છે, તેમાં મૂક્યું છે.') + '</span></h2>' +
+  view.innerHTML = '<h1' + lgA() + '><span>' + tx('Subjects', 'વિષય') + '</span><span class="en">' + tx(SUBJ.length + ' subjects. Each discourse sits under the two to four it speaks about most.', toGuNum(SUBJ.length) + ' વિષય. દરેક વચનામૃત જે બે થી ચાર વિષય વિષે સૌથી વધુ કહે છે, તેમાં મૂક્યું છે.') + '</span></h1>' +
     '<ul class="topics">' + order.map(k => '<li><a href="' + subjHref(k) + '"><span><span class="t-gu"' + lgA() + '>' + esc(subjName(k)) + '</span></span><span class="t-n">' + nm(SUBJ_IDX[k].length) + '</span></a></li>').join('') + '</ul>';
 }
 function subjectView(key){
   const k = SUBJ_BY.get(key); if (k === undefined){ subjectsView(); return; }
   const list = SUBJ_IDX[k];
-  view.innerHTML = '<a class="back" href="#subjects"' + lgA() + '>' + icon('left') + tx('Subjects', 'વિષય') + '</a><h2' + lgA() + '><span>' + esc(subjName(k)) + '</span><span class="en">' + discCount(list.length) + '</span></h2>' +
+  view.innerHTML = '<a class="back" href="#subjects"' + lgA() + '>' + icon('left') + tx('Subjects', 'વિષય') + '</a><h1' + lgA() + '><span>' + esc(subjName(k)) + '</span><span class="en">' + discCount(list.length) + '</span></h1>' +
     '<ul class="drows">' + list.map(i => row(V[i])).join('') + '</ul>';
 }
 
@@ -865,7 +884,7 @@ function qMatches(find, who){
 function questionsView(){
   const chip = (w, label) => '<button type="button" data-qwho="' + w + '" aria-pressed="' + (qState.who === w) + '">' + label + '</button>';
   const lang = (l, label) => '<button type="button" data-qlang="' + l + '" aria-pressed="' + (show === l) + '">' + label + '</button>';
-  view.innerHTML = '<h2' + lgA() + '><span>' + tx('Questions and answers', 'પ્રશ્નોત્તર') + '</span><span class="en">' + tx('Questions asked in the Vachanamrut, with the answers in the book’s own words', 'વચનામૃતમાં પુછાયેલા પ્રશ્નો, ગ્રંથના જ શબ્દોમાં ઉત્તર સાથે') + '</span></h2>' +
+  view.innerHTML = '<h1' + lgA() + '><span>' + tx('Questions and answers', 'પ્રશ્નોત્તર') + '</span><span class="en">' + tx('Questions asked in the Vachanamrut, with the answers in the book’s own words', 'વચનામૃતમાં પુછાયેલા પ્રશ્નો, ગ્રંથના જ શબ્દોમાં ઉત્તર સાથે') + '</span></h1>' +
     '<form class="qfilter" id="qfilter" role="search" autocomplete="off"><label for="qfind" class="sr-only">' + tx('Find a question', 'પ્રશ્ન શોધો') + '</label><input id="qfind" type="search" maxlength="80" placeholder="' + tx('Find a question: anger, maya, ભક્તિ…', 'પ્રશ્ન શોધો: ભક્તિ, માયા, ક્રોધ…') + '" value="' + esc(qState.find) + '"></form>' +
     '<div class="qchips" role="group" aria-label="' + tx('Who asked', 'કોણે પૂછ્યું') + '"' + lgA() + '>' + chip('all', tx('All', 'બધા')) + chip('devotees', tx('Asked by devotees', 'ભક્તોએ પૂછેલા')) + chip('maharaj', tx('Asked by Shriji Maharaj', 'શ્રીજીમહારાજે પૂછેલા')) + '</div>' +
     '<div class="qchips qlang" role="group" aria-label="' + tx('Language', 'ભાષા') + '"><span class="lbl"' + lgA() + '>' + tx('Show in', 'ભાષા') + '</span>' + lang('gu', '<span lang="gu">ગુજરાતી</span>') + lang('en', 'English') + lang('tr', 'Transliteration') + '</div>' +
@@ -898,7 +917,7 @@ view.addEventListener('input', e => { if (e.target.id !== 'qfind') return; clear
 
 /* ---------- saved, search ---------- */
 function savedView(){
-  view.innerHTML = '<h2' + lgA() + '><span>' + tx('Saved', 'સાચવેલાં વચનામૃત') + '</span><span class="en">' + tx('Saved discourses, kept in this browser only', 'ફક્ત આ બ્રાઉઝરમાં સાચવેલાં') + '</span></h2>' +
+  view.innerHTML = '<h1' + lgA() + '><span>' + tx('Saved', 'સાચવેલાં વચનામૃત') + '</span><span class="en">' + tx('Saved discourses, kept in this browser only', 'ફક્ત આ બ્રાઉઝરમાં સાચવેલાં') + '</span></h1>' +
     (saved.length ? '<ul class="drows">' + saved.map(k => row(V[BY.get(k)])).join('') + '</ul>' : '<p class="empty"' + lgA() + '>' + tx('Nothing saved yet. Tap “Save” on any Vachanamrut to keep it here.', 'હજી કશું સાચવ્યું નથી. કોઈ પણ વચનામૃત પર “સાચવો” દબાવો, એટલે તે અહીં રહેશે.') + '</p>');
 }
 let lastSearch = false;
@@ -930,7 +949,7 @@ function searchView(q){
   const qm = qMatches(raw, 'all').list;
   const qBlock = qm.length ? '<section class="qblock"><p class="label"' + lgA() + '>' + tx('Questions asked in the Vachanamrut', 'વચનામૃતમાં પુછાયેલા પ્રશ્નો') + '</p>' + qm.slice(0, 3).map(x => qaCard(x, ts)).join('') +
     (qm.length > 3 ? '<a class="act" href="#questions" id="all-q" data-find="' + esc(raw) + '"' + lgA() + '>' + tx('All ' + qm.length + ' matching questions →', 'બધા ' + toGuNum(qm.length) + ' પ્રશ્ન →') + '</a>' : '') + '</section><p class="label"' + lgA() + '>' + tx('Discourses', 'વચનામૃત') + '</p>' : '';
-  view.innerHTML = '<h2><span class="pre"' + lgA() + '>' + tx('Search results for', 'શોધનાં પરિણામ') + '</span><span>“' + esc(raw) + '”</span></h2>' + loadingNote + qBlock +
+  view.innerHTML = '<h1><span class="pre"' + lgA() + '>' + tx('Search results for', 'શોધનાં પરિણામ') + '</span><span>“' + esc(raw) + '”</span></h1>' + loadingNote + qBlock +
     '<p class="list-count"' + lgA() + '>' + (hits.length ? discCount(hits.length) + (hits.length > shown.length ? tx(' · showing the first ' + shown.length, ' · પહેલાં ' + toGuNum(shown.length) + ' બતાવ્યાં') : '') : '') + '</p>' +
     (hits.length ? '<ul class="drows" id="results">' + items + '</ul>' : '<p class="empty"' + lgA() + '>' + tx('No discourse contains all of these words. Try fewer words, a different spelling, or search in Gujarati.', 'આ બધા શબ્દો હોય એવું કોઈ વચનામૃત નથી. ઓછા શબ્દો, બીજી જોડણી, કે અંગ્રેજીમાં શોધી જુઓ.') + '</p>');
   terms = ts;
@@ -970,16 +989,21 @@ function route(keepTerms){
     view.insertAdjacentHTML('afterbegin', '<aside class="welcome"' + lgA() + '><p><b lang="gu">વચનામૃત</b>' + tx(': Bhagwan Swaminarayan’s discourses, in Gujarati and English. This one was shared with you.', ': ભગવાન સ્વામિનારાયણનાં વચનામૃત, ગુજરાતી અને અંગ્રેજીમાં. આ વચનામૃત કોઈએ તમને મોકલ્યું છે.') + '</p><a class="act" href="#home">' + tx('Today’s Vachanamrut and more', 'આજનું વચનામૃત અને બીજું ઘણું') + icon('right') + '</a></aside>');
   }
   welcome = false;
+  // Each page gets its own tab title (history, bookmarks, screen readers).
+  const art = view.querySelector('.disc'), h1 = view.querySelector('h1'), h1t = h1 && (h1.querySelector('span') || h1);
+  document.title = art ? refOf(V[parseInt(art.dataset.i, 10)]) + ' · Vachanamrut' : h1 && !view.querySelector('.hero') ? h1t.textContent + ' · Vachanamrut' : 'Vachanamrut';
 }
 const qInput = document.getElementById('q'); const qClear = document.getElementById('q-clear');
 function fitPlaceholder(){ qInput.placeholder = qInput.clientWidth >= 280 ? 'Search: maya, ભક્તિ, or Loya 7' : 'Search'; }
 window.addEventListener('resize', fitPlaceholder);
 let tmr = null;
 function resetSearch(){ qInput.value = ''; qClear.hidden = true; clearTimeout(tmr); }
-window.addEventListener('hashchange', () => { resetSearch(); route(); window.scrollTo(0, 0); });
+// After moving to another page, focus its heading so screen readers announce it.
+function focusHeading(){ const h = view.querySelector('h1'); if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll: true}); } }
+window.addEventListener('hashchange', () => { resetSearch(); route(); window.scrollTo(0, 0); focusHeading(); });
 document.querySelector('.nav').addEventListener('click', e => {
   const a = e.target.closest('a[href^="#"]'); if (!a) return;
-  if (a.getAttribute('href') === (location.hash || '#home')){ e.preventDefault(); resetSearch(); route(); window.scrollTo(0, 0); }
+  if (a.getAttribute('href') === (location.hash || '#home')){ e.preventDefault(); resetSearch(); route(); window.scrollTo(0, 0); focusHeading(); }
 });
 document.querySelector('.brand').addEventListener('click', e => { if ((location.hash || '#home') === '#home'){ e.preventDefault(); resetSearch(); route(); window.scrollTo(0, 0); } });
 qInput.addEventListener('input', () => {
