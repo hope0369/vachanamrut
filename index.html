@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-de89DahmoI4mJK2UX5PUCkVtUs9jW9ern3/7jvYpfFg='; style-src 'sha256-iYXTjim9xvoEXVFOXYrjQ3tLMJSekY2RXiR9ciQCArE=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-OOmIIFIuVNILGdWr8nLVEoKsIWCVHky6aW2nHH/Op30='; style-src 'sha256-iYXTjim9xvoEXVFOXYrjQ3tLMJSekY2RXiR9ciQCArE=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -866,7 +866,8 @@ function qaCard(x, ts){
   return '<article class="qa" data-q="' + x.k + '">' + qtext +
     '<p class="who"' + lgA() + '>' + (byMaharaj(x) ? tx('Asked by Shriji Maharaj', 'શ્રીજીમહારાજે પૂછ્યું') : show === 'gu' && x.whog ? 'પૂછનાર: ' + esc(x.whog) : 'Asked by ' + esc(x.who)) + ' · <a href="' + qHref(x) + '">' + esc(refOf(v)) + '</a> <span>' + esc(titleOf(v)) + '</span></p>' +
     (l !== show ? '<p class="na"' + lgA() + '>' + (show === 'gu' ? 'આ પ્રશ્ન ગુજરાતી પાઠમાં હજી મેળવ્યો નથી, તેથી અંગ્રેજીમાં બતાવ્યો છે.' : 'No transliteration is matched for this one, so it is shown in ' + (l === 'gu' ? 'Gujarati.' : 'English.')) + '</p>' : '') +
-    '<details><summary' + (l === 'gu' ? ' lang="gu"' : '') + '>' + sum + '</summary><div class="ans"' + (l === 'gu' ? ' lang="gu"' : '') + '></div></details></article>';
+    '<details><summary' + (l === 'gu' ? ' lang="gu"' : '') + '>' + sum + '</summary><div class="ans"' + (l === 'gu' ? ' lang="gu"' : '') + '></div></details>' +
+    '<div class="actions"><button type="button" class="act" data-qshare="' + x.k + '"' + lgA() + '>' + icon('share') + tx('Share', 'મોકલો') + '</button></div></article>';
 }
 function answerHtml(x){
   const v = V[x.i], l = qLang(x);
@@ -1110,13 +1111,17 @@ function copyText(txt, okMsg){
 const shareUrl = v => location.href.split('#')[0] + vHref(v);
 const shareText = v => 'વચનામૃત ' + v.refg + ': ' + v.tg + '\nVachanamrut ' + v.ref + ': ' + v.t;
 const sheet = document.getElementById('sheet');
+const shareButtons = (full, native, text) =>
+  (native ? '<button type="button" class="act primary" data-sh="native"' + lgA() + '>' + icon('share') + tx('Share…', 'મોકલો…') + '</button>' : '') +
+  '<a class="act" data-sh="wa" href="https://wa.me/?text=' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
+  '<a class="act" data-sh="line" href="https://line.me/R/msg/text/?' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">LINE</a>' +
+  (text === false ? '' : '<button type="button" class="act" data-sh="text"' + lgA() + '>' + tx('Copy text', 'લખાણ કૉપિ કરો') + '</button>') +
+  '<button type="button" class="act" data-sh="link"' + lgA() + '>' + tx('Copy link', 'લિંક કૉપિ કરો') + '</button>';
 function openShare(v){
   const txt = shareText(v), url = shareUrl(v);
   const grid = document.getElementById('sheet-grid');
   document.getElementById('sheet-ref').textContent = tx('Vachanamrut ' + v.ref, 'વચનામૃત ' + v.refg);
-  grid.innerHTML = (navigator.share ? '<button type="button" class="act primary" data-sh="native"' + lgA() + '>' + icon('share') + tx('Share…', 'મોકલો…') + '</button>' : '') +
-    '<a class="act" data-sh="wa" href="https://wa.me/?text=' + encodeURIComponent(txt + '\n\n' + url) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
-    '<button type="button" class="act" data-sh="link"' + lgA() + '>' + tx('Copy link', 'લિંક કૉપિ કરો') + '</button>';
+  grid.innerHTML = shareButtons(txt + '\n\n' + url, !!navigator.share, false);
   grid.onclick = async e => {
     const b = e.target.closest('[data-sh]'); if (!b) return;
     const k = b.dataset.sh;
@@ -1126,6 +1131,38 @@ function openShare(v){
   };
   if (typeof sheet.showModal === 'function'){ try { sheet.showModal(); } catch (e) { copyText(txt + '\n\n' + url, 'Text copied'); } }
   else copyText(txt + '\n\n' + url, 'Text copied');
+}
+// Plain-text answer paragraphs for sharing (same slicing as answerHtml, footnote marks removed).
+function answerParas(x){
+  const v = V[x.i], l = qLang(x);
+  const paras = l === 'gu' ? v.gu : l === 'tr' ? v.tr : v.en; if (!paras) return null;
+  const sp = l === 'gu' ? x.restg : l === 'tr' ? x.restt : x.rest, k0 = l === 'en' ? x.p : x.pg, idx = l === 'en' ? x.a : x.ag;
+  const rest = sp && paras[k0] ? paras[k0].slice(sp[0], sp[1]).trim() : '';
+  return (rest ? [rest] : []).concat(idx.map(k => paras[k]).filter(Boolean)).map(plain);
+}
+function qaShareText(x){
+  const v = V[x.i], l = qLang(x), ps = answerParas(x) || [];
+  const q = plain(l === 'gu' ? x.qg : l === 'tr' ? x.qt : x.q).trim();
+  const who = byMaharaj(x) ? (l === 'gu' ? 'શ્રીજીમહારાજે પૂછ્યું' : 'Asked by Shriji Maharaj') : l === 'gu' && x.whog ? 'પૂછનાર: ' + x.whog : 'Asked by ' + x.who;
+  return [q, '— ' + who, ps.length ? (l === 'gu' ? 'ઉત્તર:' : 'Answer:') + '\n' + ps.join('\n\n') : '', '— ' + (l === 'gu' ? 'વચનામૃત ' + v.refg : 'Vachanamrut ' + v.ref)].filter(Boolean).join('\n\n');
+}
+async function openQaShare(x){
+  const v = V[x.i];
+  if (textState === 'loading' || (qLang(x) === 'tr' && extraState === 'loading')){ flash(tx('Loading the text…', 'પાઠ ખૂલે છે…')); try { await TEXT_P; if (qLang(x) === 'tr') await EXTRA_P; } catch (e) {} }
+  const txt = qaShareText(x), url = location.href.split('#')[0] + qHref(x), full = txt + '\n\n' + url;
+  const grid = document.getElementById('sheet-grid');
+  document.getElementById('sheet-ref').textContent = tx('Question · ' + refOf(v), 'પ્રશ્ન · ' + refOf(v));
+  grid.innerHTML = shareButtons(full, !!navigator.share);
+  grid.onclick = async e => {
+    const b = e.target.closest('[data-sh]'); if (!b) return;
+    const k = b.dataset.sh;
+    if (k === 'native'){ try { await navigator.share({title: 'Vachanamrut ' + v.ref, text: txt, url}); } catch (err) {} closeSheet(); }
+    else if (k === 'text'){ copyText(full, tx('Text copied', 'લખાણ કૉપિ થયું')); closeSheet(); }
+    else if (k === 'link'){ copyText(url, tx('Link copied', 'લિંક કૉપિ થઈ')); closeSheet(); }
+    else closeSheet();
+  };
+  if (typeof sheet.showModal === 'function'){ try { sheet.showModal(); } catch (e) { copyText(full, 'Text copied'); } }
+  else copyText(full, 'Text copied');
 }
 function closeSheet(){ if (sheet.open) sheet.close(); }
 document.getElementById('sheet-close').addEventListener('click', closeSheet);
@@ -1151,6 +1188,7 @@ view.addEventListener('click', e => {
     // The tabs switch this page only; the saved language is changed from Aa (or the Questions page).
     art.querySelectorAll('button[data-show]').forEach(b => b.setAttribute('aria-selected', String(b === tabBtn)));
     document.getElementById('text-slot').innerHTML = textHtml(v, tabBtn.dataset.show); return; }
+  const qs = e.target.closest('button[data-qshare]'); if (qs){ const x = Q[parseInt(qs.dataset.qshare, 10)]; if (x) openQaShare(x); return; }
   const btn = e.target.closest('button[data-act]'); if (!btn) return;
   const art = btn.closest('.vat'); const v = art && V[parseInt(art.dataset.i, 10)]; if (!v) return;
   if (btn.dataset.act === 'read' || btn.dataset.act === 'read-next'){
