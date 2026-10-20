@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wyyc6fQpSbC9zcLqyQpJr6PCUF+rr/TZ7WWE90UOoI0='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AL+78fPmlXK32iscOKw4HEzL4x6r27LHD9FOX/9x6ck='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -478,7 +478,7 @@ body.show-gu .only-en, body.show-en .only-gu{display:none}
   </div>
 </nav>
 
-<main class="shell" id="view"><div class="loading" aria-live="polite"><p class="loading-gu" lang="gu">જય સ્વામિનારાયણ</p><p>Opening the Vachanamrut… The first visit takes a few seconds; after that it opens straight away, even offline.</p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div><noscript><p>This page needs JavaScript turned on to show the Vachanamrut.</p></noscript></main>
+<main class="shell" id="view"><div class="loading" aria-live="polite"><p class="loading-gu" lang="gu">જય સ્વામિનારાયણ</p><p lang="gu">વચનામૃત ખૂલે છે… પહેલી મુલાકાતમાં થોડી સેકન્ડ લાગે છે; પછી તરત ખૂલે છે, ઇન્ટરનેટ વગર પણ.</p><p lang="en">Opening the Vachanamrut… The first visit takes a few seconds; after that it opens straight away, even offline.</p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div><noscript><p lang="gu">વચનામૃત બતાવવા માટે આ પાનાને JavaScript ચાલુ જોઈએ.</p><p lang="en">This page needs JavaScript turned on to show the Vachanamrut.</p></noscript></main>
 
 <footer class="shell">
   <p data-gu="હરિપ્રબોધમથી પ્રેરિત">Inspired by HariPrabodham</p>
@@ -487,10 +487,10 @@ body.show-gu .only-en, body.show-en .only-gu{display:none}
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
   <div class="sheet-in">
-    <h3 id="sheet-title" data-gu="આ વચનામૃત મોકલો">Share this Vachanamrut</h3>
+    <h3 id="sheet-title">Share this Vachanamrut</h3>
     <p id="sheet-ref"></p>
     <div class="sheet-grid" id="sheet-grid"></div>
-    <button type="button" class="act sheet-close" id="sheet-close" data-gu="બંધ કરો">Close</button>
+    <button type="button" class="act sheet-close" id="sheet-close">Close</button>
   </div>
 </dialog>
 
@@ -502,8 +502,8 @@ body.show-gu .only-en, body.show-en .only-gu{display:none}
     <p class="label" data-gu="લખાણ આમાં બતાવો">Show text in</p>
     <fieldset class="langsw" id="show-set"><legend data-gu="લખાણ આમાં બતાવો">Show text in</legend>
       <input type="radio" name="show" id="show-gu" value="gu"><label for="show-gu" lang="gu">ગુજરાતી</label>
-      <input type="radio" name="show" id="show-en" value="en"><label for="show-en">English</label>
-      <input type="radio" name="show" id="show-tr" value="tr"><label for="show-tr">Transliteration</label>
+      <input type="radio" name="show" id="show-en" value="en"><label for="show-en" data-gu="અંગ્રેજી">English</label>
+      <input type="radio" name="show" id="show-tr" value="tr"><label for="show-tr" data-gu="લિપ્યંતર">Transliteration</label>
     </fieldset>
     <p class="label" data-gu="રંગ">Theme</p>
     <fieldset class="langsw" id="theme-set"><legend data-gu="રંગ">Theme</legend>
@@ -527,17 +527,19 @@ body.show-gu .only-en, body.show-en .only-gu{display:none}
 <script>
 (function(){
 "use strict";
+// Before the page's own language code exists: Gujarati unless the reader chose English or transliteration.
+const guStored = () => { try { const s = JSON.parse(localStorage.getItem('vach-show')); return s !== 'en' && s !== 'tr'; } catch (e) { return true; } };
 // Never run inside someone else's frame, so no page can dress this one up and trick a tap.
 if (window.top !== window.self){
   const box = document.createElement('div'); box.className = 'framed';
   const a = document.createElement('a'); a.href = location.href; a.target = '_top'; a.rel = 'noopener';
-  a.textContent = 'Open the Vachanamrut in its own window';
+  a.textContent = guStored() ? 'વચનામૃતને તેની પોતાની વિન્ડોમાં ખોલો' : 'Open the Vachanamrut in its own window';
   box.append(a); document.body.replaceChildren(box);
   return;
 }
 var D;
 try { D = JSON.parse(document.getElementById('vach-data').textContent); } catch (err) {
-  document.getElementById('view').textContent = 'The Vachanamrut data could not be read. Rebuild the page with build.py.';
+  document.getElementById('view').textContent = guStored() ? 'વચનામૃતનો ડેટા વાંચી શકાયો નહીં. build.py થી પાનું ફરી બનાવો.' : 'The Vachanamrut data could not be read. Rebuild the page with build.py.';
   return;
 }
 const view = document.getElementById('view');
@@ -615,6 +617,9 @@ const titleOf = v => show === 'gu' ? v.tg : show === 'tr' && v.tt ? v.tt : v.t;
 const refOf = v => show === 'gu' ? v.refg : v.ref;
 const secName = s => show === 'gu' ? s.gu : s.en;
 const subjName = k => show === 'gu' ? SUBJ[k][1] : SUBJ[k][2];
+const enName = () => tx('English', 'અંગ્રેજી'), trName = () => tx('Transliteration', 'લિપ્યંતર');
+// The language of a block of reading text, whatever the page language is (for screen readers).
+const lgW = w => w === 'gu' ? ' lang="gu"' : w === 'tr' ? ' lang="gu-Latn"' : ' lang="en"';
 const discCount = n => show === 'gu' ? toGuNum(n) + ' વચનામૃત' : n + (n === 1 ? ' discourse' : ' discourses');
 const THEMES = ['system', 'light', 'dark'];
 let theme = load('vach-theme', 'system'); if (!THEMES.includes(theme)) theme = 'system';
@@ -639,11 +644,13 @@ function matchRanges(s, terms){
   return merged;
 }
 // One paragraph: escape, mark search words, turn [n] into a footnote link, keep line breaks.
-function fmt(s, terms, noteId){
-  const marks = matchRanges(s, terms);
+// Gujarati words inside text that is not Gujarati (quoted verses in English notes, a Gujarati search word) get lang="gu" for screen readers.
+const guWrap = t => t.replace(/[઀-૿]+(?:[ ,.;:!?'’‘“”()\-–—…][઀-૿]+)*/g, m => '<span lang="gu">' + m + '</span>');
+function fmt(s, terms, noteId, wrapGu){
+  const marks = matchRanges(s, terms), e = wrapGu ? x => guWrap(esc(x)) : esc;
   let h = '', at = 0;
-  for (const r of marks){ h += esc(s.slice(at, r[0])) + '<mark>' + esc(s.slice(r[0], r[1])) + '</mark>'; at = r[1]; }
-  h += esc(s.slice(at));
+  for (const r of marks){ h += e(s.slice(at, r[0])) + '<mark>' + e(s.slice(r[0], r[1])) + '</mark>'; at = r[1]; }
+  h += e(s.slice(at));
   h = h.replace(/\[([0-9૦-૯]{1,3})\]/g, (m, d) => noteId ? '<sup><a href="#' + noteId + '-' + fromGuNum(d) + '" data-note="' + fromGuNum(d) + '">' + d + '</a></sup>' : '<sup>' + d + '</sup>');
   return h.replace(/\n/g, '<br>');
 }
@@ -708,7 +715,7 @@ function opening(v){
   if (!paras) return '<p class="na">' + (textState === 'failed' ? tx('The text could not be loaded.', 'પાઠ ખૂલી શક્યો નહીં.') : tx('Loading…', 'ખૂલે છે…')) + '</p>';
   const k = paras.findIndex((p, j) => !isSetting(p, j) && !/[॥;]\s*$/.test(p.split('\n')[0]));
   const p = plain(paras[k >= 0 ? k : 0]);
-  return '<p class="t-open"' + (paras === v.gu ? ' lang="gu"' : '') + '>' + esc(p.length > 260 ? p.slice(0, 260).replace(/\s+\S*$/, '') + ' …' : p) + '</p>';
+  return '<p class="t-open"' + lgW(paras === v.gu ? 'gu' : paras === v.tr ? 'tr' : 'en') + '>' + esc(p.length > 260 ? p.slice(0, 260).replace(/\s+\S*$/, '') + ' …' : p) + '</p>';
 }
 function todayCard(){
   const v = V[todayI];
@@ -744,7 +751,7 @@ function progressCard(){
   const pct = Math.round(n / total * 100), bar = n ? Math.max(2, n / total * 100) : 0;
   return '<div class="progress-card"' + lgA() + '><p class="label" id="h-prog">' + tx('Your reading', 'તમારું વાંચન') + '</p>' +
     '<div class="ptop"><span>' + (n ? tx(n + ' of ' + total + ' read', toGuNum(total) + ' માંથી ' + toGuNum(n) + ' વાંચ્યાં') : tx('Read the whole Vachanamrut, one discourse at a time', 'એક પછી એક, આખું વચનામૃત વાંચો')) + '</span>' + (n ? '<small>' + (pct < 1 ? tx('under 1', '૧ થી ઓછા') : nm(pct)) + '%</small>' : '') + '</div>' +
-    '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + n + '" aria-label="Discourses read"><i data-w="' + bar.toFixed(1) + '"></i></div>' +
+    '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + n + '" aria-label="' + tx('Discourses read', 'વાંચેલાં વચનામૃત') + '"><i data-w="' + bar.toFixed(1) + '"></i></div>' +
     '<div class="pacts">' + (last ? '<a class="act primary" href="' + vHref(last) + '">' + tx('Continue: ', 'આગળ વાંચો: ') + esc(refOf(last)) + icon('right') + '</a>' : '') +
     (nextUnread && (!last || nextUnread.key !== last.key) ? '<a class="act" href="' + vHref(nextUnread) + '">' + tx('Next unread: ', 'હવે પછીનું: ') + esc(refOf(nextUnread)) + '</a>' : '') +
     (!nextUnread ? '<span class="act">' + tx('All ' + total + ' read. Jay Swaminarayan!', 'બધાં ' + toGuNum(total) + ' વાંચ્યાં. જય સ્વામિનારાયણ!') + '</span>' : '') + '</div></div>';
@@ -776,7 +783,7 @@ function sumList(v){
   // Group each numbered point with the lettered points under it.
   const groups = [];
   v.sum.forEach(([lvl, t]) => { if (lvl === 1 || !groups.length) groups.push({t: lvl === 1 ? t : '', subs: lvl === 2 ? [t] : []}); else groups[groups.length - 1].subs.push(t); });
-  return '<ol class="sum-list">' + groups.map(g => '<li>' + esc(g.t) + (g.subs.length ? '<ol>' + g.subs.map(t => '<li>' + esc(t) + '</li>').join('') + '</ol>' : '') + '</li>').join('') + '</ol>';
+  return '<ol class="sum-list" lang="en">' + groups.map(g => '<li>' + esc(g.t) + (g.subs.length ? '<ol>' + g.subs.map(t => '<li>' + esc(t) + '</li>').join('') + '</ol>' : '') + '</li>').join('') + '</ol>';
 }
 let sumOpen = load('vach-sum-open', true) !== false;
 function summaryHtml(v){
@@ -790,7 +797,7 @@ function firstPoint(v){
   const i = v.sum.findIndex(x => x[0] === 1); if (i < 0) return '';
   let t = v.sum[i][1]; const sub = v.sum[i + 1] && v.sum[i + 1][0] === 2 ? v.sum[i + 1][1] : '';
   if (/:$/.test(t) && sub) t = t.replace(/:$/, ': ') + sub;
-  return '<p class="t-sum">' + esc(t) + '</p>';
+  return '<p class="t-sum" lang="en">' + esc(t) + '</p>';
 }
 
 /* ---------- a discourse ---------- */
@@ -804,12 +811,12 @@ function textHtml(v, which){
   const notes = which === 'gu' ? v.fg : which === 'en' ? v.fe : v.ft;
   if (!paras) return waiting(which === 'tr' ? 'wait-extra' : 'wait-text', which === 'tr' ? 'transliteration' : 'text');
   const id = 'n-' + which;
-  const body = paras.map((p, k) => '<p id="p-' + which + '-' + k + '"' + (isSetting(p, k) ? ' class="setting"' : /[॥;]\s*$/.test(p.split('\n')[0]) && k === 0 && v.n === 1 ? ' class="shlok"' : '') + '>' + fmt(p, terms, id) + '</p>').join('');
-  const list = extraState === 'ready' && notes.length ? '<details class="notes"' + (terms && notes.some(t => matchRanges(t, terms).length) ? ' open' : '') + '><summary>' + (which === 'gu' ? '<span lang="gu">ટિપ્પણી (' + toGuNum(notes.length) + ')</span>' : 'Notes (' + notes.length + ')') + '</summary><ol class="notes-list">' +
+  const body = paras.map((p, k) => '<p id="p-' + which + '-' + k + '"' + (isSetting(p, k) ? ' class="setting"' : /[॥;]\s*$/.test(p.split('\n')[0]) && k === 0 && v.n === 1 ? ' class="shlok"' : '') + '>' + fmt(p, terms, id, which !== 'gu') + '</p>').join('');
+  const list = extraState === 'ready' && notes.length ? '<details class="notes"' + lgW(which) + (terms && notes.some(t => matchRanges(t, terms).length) ? ' open' : '') + '><summary>' + (which === 'gu' ? '<span lang="gu">ટિપ્પણી (' + toGuNum(notes.length) + ')</span>' : 'Notes (' + notes.length + ')') + '</summary><ol class="notes-list">' +
     notes.map(t => { const m = t.match(/^\s*([0-9૦-૯]{1,3})[.)]\s*/); const num = m ? fromGuNum(m[1]) : '';
-      return '<li' + (num ? ' id="' + id + '-' + num + '"' : '') + '>' + fmt(t, terms) + '</li>'; }).join('') + '</ol></details>'
+      return '<li' + (num ? ' id="' + id + '-' + num + '"' : '') + '>' + fmt(t, terms, undefined, which !== 'gu') + '</li>'; }).join('') + '</ol></details>'
     : extraState === 'loading' ? '<p class="na"' + lgA() + '>' + tx('Loading notes…', 'ટિપ્પણી ખૂલે છે…') + '</p>' : '';
-  return '<div class="text ' + which + '"' + (which === 'gu' ? ' lang="gu"' : '') + '>' + body + '</div>' + list;
+  return '<div class="text ' + which + '"' + lgW(which) + '>' + body + '</div>' + list;
 }
 let jumpPara = null;   // an English paragraph to open at, from a question's link
 function discView(key, para, paraLang){
@@ -829,9 +836,9 @@ function discView(key, para, paraLang){
     '<div class="vat-head"><a class="ref" href="' + vHref(v) + '"' + lgA() + '>' + esc(refOf(v)) + '</a>' + (s.appendix ? '<span class="appendix"' + lgA() + '>' + tx('Appendix', 'પરિશિષ્ટ') + '</span>' : '') + '</div>' +
     '<h1><span class="gu-t"' + lgA() + '>' + esc(titleOf(v)) + '</span></h1>' +
     '<p class="when"' + lgA() + '>' + dateLine(v, show === 'gu') + '</p>' + subjectChips(v) +
-    '<div class="actions"><button type="button" class="act primary" data-act="share"' + lgA() + '>' + icon('share') + tx('Share', 'મોકલો') + '</button>' + saveBtn(v) + readBtn(v) + '</div>' +
+    '<div class="actions"><button type="button" class="act primary" data-act="share">' + icon('share') + 'Share</button>' + saveBtn(v) + readBtn(v) + '</div>' +
     '<div id="sum-slot">' + summaryHtml(v) + '</div>' +
-    '<div class="tabs" role="tablist" aria-label="' + tx('Show the text in', 'પાઠની ભાષા') + '">' + tab('gu', '<span lang="gu">ગુજરાતી</span>') + tab('en', 'English') + tab('tr', 'Transliteration') + '</div>' +
+    '<div class="tabs" role="tablist" aria-label="' + tx('Show the text in', 'પાઠની ભાષા') + '">' + tab('gu', '<span lang="gu">ગુજરાતી</span>') + tab('en', '<span' + lgA() + '>' + enName() + '</span>') + tab('tr', '<span' + lgA() + '>' + trName() + '</span>') + '</div>' +
     '<div id="text-slot">' + textHtml(v, viewShow) + '</div>' +
     '<div class="actions">' + readBtn(v) + (next ? '<button type="button" class="act primary" data-act="read-next" data-next="' + next.key + '"' + lgA() + '>' + tx('Mark as read and open ' + esc(next.ref), 'વાંચ્યું, હવે ' + esc(next.refg) + ' ખોલો') + icon('right') + '</button>' : '') + '</div>' + pager + '</article>';
   lastKey = key; store('vach-last', key);
@@ -843,7 +850,7 @@ function discView(key, para, paraLang){
 const subjHref = k => '#subject-' + SUBJ[k][0];
 function subjectChips(v){
   if (!v.subs.length) return '';
-  return '<ul class="subj-chips" aria-label="Subjects">' + v.subs.map(k => '<li><a href="' + subjHref(k) + '"' + lgA() + '>' + esc(subjName(k)) + '</a></li>').join('') + '</ul>';
+  return '<ul class="subj-chips" aria-label="' + tx('Subjects', 'વિષય') + '">' + v.subs.map(k => '<li><a href="' + subjHref(k) + '"' + lgA() + '>' + esc(subjName(k)) + '</a></li>').join('') + '</ul>';
 }
 function subjectsView(){
   const order = SUBJ.map((x, k) => k).sort((a, b) => SUBJ_IDX[b].length - SUBJ_IDX[a].length || SUBJ[a][2].localeCompare(SUBJ[b][2]));
@@ -868,23 +875,23 @@ function qaCard(x, ts){
   const l = qLang(x);
   // Some of Shriji Mahārāj's questions run to several paragraphs: show the start; the discourse link has it all.
   const raw = l === 'gu' ? x.qg : l === 'tr' ? x.qt : x.q, lg = raw.length > 520 ? ' long' : '';
-  const qtext = l === 'gu' ? '<p class="q-gu' + lg + '" lang="gu">' + fmt(x.qg, ts) + '</p>' : l === 'tr' ? '<p class="q-en' + lg + '"><i>' + fmt(x.qt, ts) + '</i></p>' : '<p class="q-en' + lg + '">' + fmt(x.q, ts) + '</p>';
-  const sum = l === 'gu' ? (byMaharaj(x) ? 'ઉત્તર વાંચો' : 'શ્રીજીમહારાજનો ઉત્તર') : byMaharaj(x) ? 'Read the answer' : 'Shriji Maharaj’s answer';
+  const qtext = l === 'gu' ? '<p class="q-gu' + lg + '" lang="gu">' + fmt(x.qg, ts) + '</p>' : l === 'tr' ? '<p class="q-en' + lg + '" lang="gu-Latn"><i>' + fmt(x.qt, ts) + '</i></p>' : '<p class="q-en' + lg + '" lang="en">' + fmt(x.q, ts) + '</p>';
+  const sum = byMaharaj(x) ? tx('Read the answer', 'ઉત્તર વાંચો') : tx('Shriji Maharaj’s answer', 'શ્રીજીમહારાજનો ઉત્તર');
   return '<article class="qa" data-q="' + x.k + '">' + qtext +
     '<p class="who"' + lgA() + '>' + (byMaharaj(x) ? tx('Asked by Shriji Maharaj', 'શ્રીજીમહારાજે પૂછ્યું') : show === 'gu' && x.whog ? 'પૂછનાર: ' + esc(x.whog) : tx('Asked by ', 'પૂછનાર: ') + esc(x.who)) + ' · <a href="' + qHref(x) + '">' + esc(refOf(v)) + '</a> <span>' + esc(titleOf(v)) + '</span></p>' +
     (l !== show ? '<p class="na"' + lgA() + '>' + (show === 'gu' ? 'આ પ્રશ્ન ગુજરાતી પાઠમાં હજી મેળવ્યો નથી, તેથી અંગ્રેજીમાં બતાવ્યો છે.' : 'No transliteration is matched for this one, so it is shown in ' + (l === 'gu' ? 'Gujarati.' : 'English.')) + '</p>' : '') +
-    '<details><summary' + (l === 'gu' ? ' lang="gu"' : '') + '>' + sum + '</summary><div class="ans"' + (l === 'gu' ? ' lang="gu"' : '') + '></div></details>' +
-    '<div class="actions"><button type="button" class="act" data-qshare="' + x.k + '"' + lgA() + '>' + icon('share') + tx('Share', 'મોકલો') + '</button></div></article>';
+    '<details><summary' + lgA() + '>' + sum + '</summary><div class="ans"' + lgW(l) + '></div></details>' +
+    '<div class="actions"><button type="button" class="act" data-qshare="' + x.k + '">' + icon('share') + 'Share</button></div></article>';
 }
 function answerHtml(x){
   const v = V[x.i], l = qLang(x);
   const paras = l === 'gu' ? v.gu : l === 'tr' ? v.tr : v.en;
-  if (!paras) return '<p class="na">' + ((l === 'tr' ? extraState : textState) === 'failed' ? 'The text could not be loaded.' : 'Loading…') + '</p>';
+  if (!paras) return '<p class="na"' + lgA() + '>' + ((l === 'tr' ? extraState : textState) === 'failed' ? tx('The text could not be loaded.', 'પાઠ ખૂલી શક્યો નહીં.') : tx('Loading…', 'ખૂલે છે…')) + '</p>';
   // The answer may start inside the question's own paragraph: [start, end] of that part, then the paragraphs after it.
   const sp = l === 'gu' ? x.restg : l === 'tr' ? x.restt : x.rest, k0 = l === 'en' ? x.p : x.pg, idx = l === 'en' ? x.a : x.ag;
   const rest = sp && paras[k0] ? paras[k0].slice(sp[0], sp[1]).trim() : '';
   const ps = (rest ? [rest] : []).concat(idx.map(k => paras[k]).filter(Boolean));
-  return ps.map(p => '<p>' + fmt(p) + '</p>').join('') + '<p class="go"><a href="' + qHref(x) + '">' + (l === 'gu' ? esc(v.refg) + 'માં વાંચો →' : 'Read it in ' + esc(v.ref) + ' →') + '</a></p>';
+  return ps.map(p => '<p>' + fmt(p) + '</p>').join('') + '<p class="go"' + lgA() + '><a href="' + qHref(x) + '">' + (show === 'gu' ? esc(v.refg) + 'માં વાંચો →' : 'Read it in ' + esc(v.ref) + ' →') + '</a></p>';
 }
 function qMatches(find, who){
   const ts = [...new Set(norm(find).split(/\s+/).filter(t => t.length >= 2))];
@@ -897,7 +904,7 @@ function questionsView(){
   view.innerHTML = '<h1' + lgA() + '><span>' + tx('Questions and answers', 'પ્રશ્નોત્તર') + '</span><span class="en">' + tx('Questions asked in the Vachanamrut, with the answers in the book’s own words', 'વચનામૃતમાં પુછાયેલા પ્રશ્નો, ગ્રંથના જ શબ્દોમાં ઉત્તર સાથે') + '</span></h1>' +
     '<form class="qfilter" id="qfilter" role="search" autocomplete="off"><label for="qfind" class="sr-only">' + tx('Find a question', 'પ્રશ્ન શોધો') + '</label><input id="qfind" type="search" maxlength="80" placeholder="' + tx('Find a question: anger, maya, ભક્તિ…', 'પ્રશ્ન શોધો: ભક્તિ, માયા, ક્રોધ…') + '" value="' + esc(qState.find) + '"></form>' +
     '<div class="qchips" role="group" aria-label="' + tx('Who asked', 'કોણે પૂછ્યું') + '"' + lgA() + '>' + chip('all', tx('All', 'બધા')) + chip('devotees', tx('Asked by devotees', 'ભક્તોએ પૂછેલા')) + chip('maharaj', tx('Asked by Shriji Maharaj', 'શ્રીજીમહારાજે પૂછેલા')) + '</div>' +
-    '<div class="qchips qlang" role="group" aria-label="' + tx('Language', 'ભાષા') + '"><span class="lbl"' + lgA() + '>' + tx('Show in', 'ભાષા') + '</span>' + lang('gu', '<span lang="gu">ગુજરાતી</span>') + lang('en', 'English') + lang('tr', 'Transliteration') + '</div>' +
+    '<div class="qchips qlang" role="group" aria-label="' + tx('Language', 'ભાષા') + '"><span class="lbl"' + lgA() + '>' + tx('Show in', 'ભાષા') + '</span>' + lang('gu', '<span lang="gu">ગુજરાતી</span>') + lang('en', '<span' + lgA() + '>' + enName() + '</span>') + lang('tr', '<span' + lgA() + '>' + trName() + '</span>') + '</div>' +
     '<p class="list-count" id="qcount"></p><div id="qlist"></div><div id="qmore"></div>';
   qRender();
 }
@@ -954,12 +961,12 @@ function searchView(q){
   const shown = hits.slice(0, 60);
   const items = shown.map(([i]) => { const v = V[i];
     const pool = show === 'gu' ? [].concat(v.gu || [], v.en || []) : show === 'tr' ? [].concat(v.tr || [], v.en || [], v.gu || []) : [].concat(v.en || [], v.gu || []); const p = pool.find(x => ts.every(t => norm(x).includes(t))) || pool.find(x => ts.some(t => norm(x).includes(t)));
-    return row(v, p ? '<span class="snip"' + (/[઀-૿]/.test(p) ? ' lang="gu"' : '') + '>' + snippet(p, ts) + '</span>' : ''); }).join('');
+    return row(v, p ? '<span class="snip"' + lgW(/[઀-૿]/.test(p) ? 'gu' : v.tr && v.tr.includes(p) ? 'tr' : 'en') + '>' + snippet(p, ts) + '</span>' : ''); }).join('');
   const loadingNote = textState === 'loading' ? '<p class="intro"' + lgA() + '>' + tx('The full text is still loading; for now only titles are searched. Results will fill in by themselves.', 'આખો પાઠ હજી ખૂલે છે; અત્યારે ફક્ત શીર્ષકોમાં શોધ થાય છે. પરિણામ આપમેળે આવશે.') + '</p>' : '';
   const qm = qMatches(raw, 'all').list;
   const qBlock = qm.length ? '<section class="qblock"><p class="label"' + lgA() + '>' + tx('Questions asked in the Vachanamrut', 'વચનામૃતમાં પુછાયેલા પ્રશ્નો') + '</p>' + qm.slice(0, 3).map(x => qaCard(x, ts)).join('') +
     (qm.length > 3 ? '<a class="act" href="#questions" id="all-q" data-find="' + esc(raw) + '"' + lgA() + '>' + tx('All ' + qm.length + ' matching questions →', 'બધા ' + toGuNum(qm.length) + ' પ્રશ્ન →') + '</a>' : '') + '</section><p class="label"' + lgA() + '>' + tx('Discourses', 'વચનામૃત') + '</p>' : '';
-  view.innerHTML = '<h1><span class="pre"' + lgA() + '>' + tx('Search results for', 'શોધનાં પરિણામ') + '</span><span>“' + esc(raw) + '”</span></h1>' + loadingNote + qBlock +
+  view.innerHTML = '<h1><span class="pre"' + lgA() + '>' + tx('Search results for', 'શોધનાં પરિણામ') + '</span><span>“' + guWrap(esc(raw)) + '”</span></h1>' + loadingNote + qBlock +
     '<p class="list-count"' + lgA() + '>' + (hits.length ? discCount(hits.length) + (hits.length > shown.length ? tx(' · showing the first ' + shown.length, ' · પહેલાં ' + toGuNum(shown.length) + ' બતાવ્યાં') : '') : '') + '</p>' +
     (hits.length ? '<ul class="drows" id="results">' + items + '</ul>' : '<p class="empty"' + lgA() + '>' + tx('No discourse contains all of these words. Try fewer words, a different spelling, or search in Gujarati.', 'આ બધા શબ્દો હોય એવું કોઈ વચનામૃત નથી. ઓછા શબ્દો, બીજી જોડણી, કે અંગ્રેજીમાં શોધી જુઓ.') + '</p>');
   terms = ts;
@@ -982,7 +989,7 @@ function applyChrome(){
     el.setAttribute('aria-label', show === 'gu' ? el.dataset.guAria : el.dataset.enAria);
   });
   document.documentElement.lang = show === 'gu' ? 'gu' : 'en';
-  updateSavedTab(); fitPlaceholder(); syncInstall(); syncUpdBar();
+  updateSavedTab(); fitPlaceholder(); syncInstall(); syncUpdBar(); applyScale();
 }
 function currentHash(){ let h = location.hash.slice(1); try { h = decodeURIComponent(h); } catch (e) { h = ''; } return h.slice(0, 40); }
 let fromResults = false;
@@ -1003,7 +1010,10 @@ function route(keepTerms){
     view.insertAdjacentHTML('afterbegin', '<aside class="welcome"' + lgA() + '><p><b lang="gu">વચનામૃત</b>' + tx(': Bhagwan Swaminarayan’s discourses, in Gujarati and English. This one was shared with you.', ': ભગવાન સ્વામિનારાયણનાં વચનામૃત, ગુજરાતી અને અંગ્રેજીમાં. આ વચનામૃત કોઈએ તમને મોકલ્યું છે.') + '</p><a class="act" href="#home">' + tx('Today’s Vachanamrut and more', 'આજનું વચનામૃત અને બીજું ઘણું') + icon('right') + '</a></aside>');
   }
   welcome = false;
-  // Each page gets its own tab title (history, bookmarks, screen readers).
+  setTitle();
+}
+// Each page gets its own tab title (history, bookmarks, screen readers), in the page language.
+function setTitle(){
   const art = view.querySelector('.disc'), h1 = view.querySelector('h1'), h1t = h1 && (h1.querySelector('span') || h1);
   const brandT = tx('Vachanamrut', 'વચનામૃત');
   document.title = art ? refOf(V[parseInt(art.dataset.i, 10)]) + ' · ' + brandT : h1 && !view.querySelector('.hero') ? h1t.textContent + ' · ' + brandT : brandT;
@@ -1035,7 +1045,7 @@ function applyTheme(){
   document.querySelectorAll('meta[name="theme-color"]').forEach(m => { const own = m.content === '#FFF8F0' ? 'light' : 'dark';
     m.media = theme === 'system' ? '(prefers-color-scheme: ' + own + ')' : (theme === own ? 'all' : 'not all'); });
 }
-function applyScale(){ document.documentElement.style.setProperty('--scale', String(scale)); document.getElementById('size-val').textContent = Math.round(scale * 100) + '%';
+function applyScale(){ document.documentElement.style.setProperty('--scale', String(scale)); document.getElementById('size-val').textContent = nm(Math.round(scale * 100)) + '%';
   document.getElementById('size-down').disabled = scale <= 0.85; document.getElementById('size-up').disabled = scale >= 1.6; }
 function bump(d){ scale = Math.round(Math.min(1.6, Math.max(0.85, scale + d)) * 100) / 100; store('vach-scale', scale); applyScale(); }
 const settings = document.getElementById('settings');
@@ -1053,18 +1063,27 @@ settings.addEventListener('change', e => {
 // A new language choice redraws the whole page in it, keeping the reader's place.
 function redrawForLanguage(){
   const y = window.scrollY;
+  // What the reader has open: answers, how many questions are listed, the notes.
+  const openQ = [...view.querySelectorAll('.qa details[open]')].map(d => d.closest('.qa').dataset.q);
+  const shown = qState.shown, notesOpen = !!view.querySelector('details.notes[open]');
+  statusEl.hidden = true;   // a toast in the old language
   applyChrome();
   const art = view.querySelector('.disc');
   if (lastSearch && qInput.value.trim().length >= 2) searchView(qInput.value);
   else if (art) discView(V[parseInt(art.dataset.i, 10)].key);
   else route(true);
+  if (view.querySelector('#qlist')) while (qState.shown < shown && qState.shown < qState.list.length) qMore();
+  openQ.forEach(k => { const d = view.querySelector('.qa[data-q="' + k + '"] details'); if (d) d.open = true; });
+  if (notesOpen){ const d = view.querySelector('details.notes'); if (d) d.open = true; }
+  setTitle();
+  if (sheet.open && sheetDraw) sheetDraw();
   setTimeout(() => window.scrollTo(0, y), 0);
 }
 
 /* ---------- Add to Home Screen ---------- */
-const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const ANDROID = /Android/.test(navigator.userAgent);
-const MAC_SAFARI = !IOS && /Macintosh/.test(navigator.userAgent) && /Version\/[\d.]+.*Safari/.test(navigator.userAgent);
+let IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let ANDROID = /Android/.test(navigator.userAgent);
+let MAC_SAFARI = !IOS && /Macintosh/.test(navigator.userAgent) && /Version\/[\d.]+.*Safari/.test(navigator.userAgent);
 let installEvt = null;
 let installHidden = load('vach-install-hidden', false) === true;
 let firstDay = load('vach-first-day', null);
@@ -1116,9 +1135,9 @@ function copyText(txt, okMsg){
     ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
     let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(ta); flash(ok ? (okMsg || tx('Copied', 'કૉપિ થયું')) : tx('Could not copy. Select the text and copy it yourself.', 'કૉપિ ન થયું. લખાણ પસંદ કરીને જાતે કૉપિ કરો.'));
+    document.body.removeChild(ta); flash(ok ? (okMsg || 'Copied') : 'Could not copy. Select the text and copy it yourself.');
   };
-  try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => flash(okMsg || tx('Copied', 'કૉપિ થયું')), fallback); else fallback(); } catch (e) { fallback(); }
+  try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => flash(okMsg || 'Copied'), fallback); else fallback(); } catch (e) { fallback(); }
 }
 /* ---------- share as a picture (for WhatsApp status and chats) ---------- */
 function wrapLines(ctx, text, maxW){
@@ -1194,9 +1213,9 @@ let imageBusy = false;   // one image share at a time: a quick second tap must n
 async function shareCard(name, build){
   if (imageBusy) return; imageBusy = true;
   try {
-    flash(tx('Making the image…', 'ચિત્ર બને છે…'));
+    flash('Making the image…');
     let blob; try { blob = await build(); } catch (e) { blob = null; }
-    if (!blob){ flash(tx('Could not make the image in this browser.', 'આ બ્રાઉઝરમાં ચિત્ર બનાવી શકાયું નહીં.')); return; }
+    if (!blob){ flash('Could not make the image in this browser.'); return; }
     try {
       const file = new File([blob], name, {type: 'image/png'});
       // The file alone, with no title: iPhone Safari passes a title as a second item and WhatsApp then shows the image twice.
@@ -1207,50 +1226,58 @@ async function shareCard(name, build){
     }
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = name;
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
-    flash(tx('Image saved', 'ચિત્ર સાચવ્યું'));
+    flash('Image saved');
   } finally { imageBusy = false; }
 }
 const INK = '#2B1A12', SOFT = '#6A4A38';
+const whoLine = (x, l) => byMaharaj(x) ? (l === 'gu' ? 'શ્રીજીમહારાજે પૂછ્યું' : 'Asked by Shriji Maharaj') : l === 'gu' ? 'પૂછનાર: ' + (x.whog || x.who) : 'Asked by ' + x.who;
 function qaImage(x){
   const v = V[x.i], l = qLang(x), ps = answerParas(x) || [];
   const q = plain(l === 'gu' ? x.qg : l === 'tr' ? x.qt : x.q).trim();
-  const who = byMaharaj(x) ? (l === 'gu' ? 'શ્રીજીમહારાજે પૂછ્યું' : 'Asked by Shriji Maharaj') : l === 'gu' && x.whog ? 'પૂછનાર: ' + x.whog : 'Asked by ' + x.who;
+  const who = whoLine(x, l);
   const blocks = [{text: q, w: 600, k: 1, c: INK}];
   if (ps.length) blocks.push({text: ps.join('\n'), w: 400, k: 0.8, c: SOFT});
   return makeCard(l === 'gu' ? v.refg : v.ref, blocks, '— ' + who);
 }
 function shareQaImage(x){ return shareCard('vachanamrut-q-' + V[x.i].key + '.png', () => qaImage(x)); }
 function shareDiscImage(v){
-  const blocks = [{text: v.tg, w: 600, k: 1, c: INK}]; if (show !== 'gu') blocks.push({text: v.t, w: 400, i: true, k: 0.62, c: SOFT});
+  const blocks = [{text: titleOf(v), w: 600, k: 1, c: INK}];
   return shareCard('vachanamrut-' + v.key + '.png', () => makeCard(show === 'gu' ? v.refg : v.ref, blocks, ''));
 }
 
 const shareUrl = v => location.href.split('#')[0] + vHref(v);
-const shareText = v => 'વચનામૃત ' + v.refg + ': ' + v.tg + '\nVachanamrut ' + v.ref + ': ' + v.t;
+// The shared words follow the page language: Gujarati title and reference, or the English / transliterated ones.
+const shareText = v => show === 'gu' ? 'વચનામૃત ' + v.refg + ': ' + v.tg : 'Vachanamrut ' + v.ref + ': ' + titleOf(v);
+const shareTitle = v => 'Vachanamrut ' + v.ref;
 const sheet = document.getElementById('sheet');
+let sheetDraw = null;   // redraws the open share sheet (a language change while it is open)
 const shareButtons = (full, native, text) =>
-  (native ? '<button type="button" class="act primary" data-sh="native"' + lgA() + '>' + icon('share') + tx('Share…', 'મોકલો…') + '</button>' : '') +
+  (native ? '<button type="button" class="act primary" data-sh="native">' + icon('share') + 'Share…</button>' : '') +
   '<a class="act" data-sh="wa" href="https://wa.me/?text=' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
   '<a class="act" data-sh="line" href="https://line.me/R/msg/text/?' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">LINE</a>' +
-  '<button type="button" class="act" data-sh="img"' + lgA() + '>' + tx('As an image', 'ચિત્ર તરીકે') + '</button>' +
-  (text === false ? '' : '<button type="button" class="act" data-sh="text"' + lgA() + '>' + tx('Copy text', 'લખાણ કૉપિ કરો') + '</button>') +
-  '<button type="button" class="act" data-sh="link"' + lgA() + '>' + tx('Copy link', 'લિંક કૉપિ કરો') + '</button>';
+  '<button type="button" class="act" data-sh="img">As an image</button>' +
+  (text === false ? '' : '<button type="button" class="act" data-sh="text">Copy text</button>') +
+  '<button type="button" class="act" data-sh="link">Copy link</button>';
+function showSheet(draw, fallbackText){
+  sheetDraw = draw; draw();
+  if (typeof sheet.showModal === 'function'){ try { sheet.showModal(); } catch (e) { copyText(fallbackText(), 'Text copied'); } }
+  else copyText(fallbackText(), 'Text copied');
+}
 function openShare(v){
-  const txt = shareText(v), url = shareUrl(v);
-  const grid = document.getElementById('sheet-grid');
-  document.getElementById('sheet-ref').textContent = tx('Vachanamrut ' + v.ref, 'વચનામૃત ' + v.refg);
-  grid.innerHTML = shareButtons(txt + '\n\n' + url, !!navigator.share, false);
-  grid.onclick = async e => {
-    const b = e.target.closest('[data-sh]'); if (!b) return;
-    const k = b.dataset.sh;
-    if (k === 'native'){ try { await navigator.share({title: 'Vachanamrut ' + v.ref, text: txt, url}); } catch (err) {} closeSheet(); }
-    else if (k === 'img'){ closeSheet(); shareDiscImage(v); }
-    else if (k === 'img'){ closeSheet(); shareQaImage(x); }
-    else if (k === 'link'){ copyText(url, tx('Link copied', 'લિંક કૉપિ થઈ')); closeSheet(); }
-    else closeSheet();
-  };
-  if (typeof sheet.showModal === 'function'){ try { sheet.showModal(); } catch (e) { copyText(txt + '\n\n' + url, tx('Text copied', 'લખાણ કૉપિ થયું')); } }
-  else copyText(txt + '\n\n' + url, tx('Text copied', 'લખાણ કૉપિ થયું'));
+  showSheet(() => {
+    const txt = shareText(v), url = shareUrl(v);
+    const grid = document.getElementById('sheet-grid');
+    document.getElementById('sheet-ref').textContent = 'Vachanamrut ' + v.ref;
+    grid.innerHTML = shareButtons(txt + '\n\n' + url, !!navigator.share, false);
+    grid.onclick = async e => {
+      const b = e.target.closest('[data-sh]'); if (!b) return;
+      const k = b.dataset.sh;
+      if (k === 'native'){ try { await navigator.share({title: shareTitle(v), text: txt, url}); } catch (err) {} closeSheet(); }
+      else if (k === 'img'){ closeSheet(); shareDiscImage(v); }
+      else if (k === 'link'){ copyText(url, 'Link copied'); closeSheet(); }
+      else closeSheet();
+    };
+  }, () => shareText(v) + '\n\n' + shareUrl(v));
 }
 // Plain-text answer paragraphs for sharing (same slicing as answerHtml, footnote marks removed).
 function answerParas(x){
@@ -1263,26 +1290,28 @@ function answerParas(x){
 function qaShareText(x){
   const v = V[x.i], l = qLang(x), ps = answerParas(x) || [];
   const q = plain(l === 'gu' ? x.qg : l === 'tr' ? x.qt : x.q).trim();
-  const who = byMaharaj(x) ? (l === 'gu' ? 'શ્રીજીમહારાજે પૂછ્યું' : 'Asked by Shriji Maharaj') : l === 'gu' && x.whog ? 'પૂછનાર: ' + x.whog : 'Asked by ' + x.who;
+  const who = whoLine(x, l);
   return [q, '— ' + who, ps.length ? (l === 'gu' ? 'ઉત્તર:' : 'Answer:') + '\n' + ps.join('\n\n') : '', '— ' + (l === 'gu' ? 'વચનામૃત ' + v.refg : 'Vachanamrut ' + v.ref)].filter(Boolean).join('\n\n');
 }
 async function openQaShare(x){
   const v = V[x.i];
   if (textState === 'loading' || (qLang(x) === 'tr' && extraState === 'loading')){ flash(tx('Loading the text…', 'પાઠ ખૂલે છે…')); try { await TEXT_P; if (qLang(x) === 'tr') await EXTRA_P; } catch (e) {} }
-  const txt = qaShareText(x), url = location.href.split('#')[0] + qHref(x), full = txt + '\n\n' + url;
-  const grid = document.getElementById('sheet-grid');
-  document.getElementById('sheet-ref').textContent = tx('Question · ' + refOf(v), 'પ્રશ્ન · ' + refOf(v));
-  grid.innerHTML = shareButtons(full, !!navigator.share);
-  grid.onclick = async e => {
-    const b = e.target.closest('[data-sh]'); if (!b) return;
-    const k = b.dataset.sh;
-    if (k === 'native'){ try { await navigator.share({title: 'Vachanamrut ' + v.ref, text: txt, url}); } catch (err) {} closeSheet(); }
-    else if (k === 'text'){ copyText(full, tx('Text copied', 'લખાણ કૉપિ થયું')); closeSheet(); }
-    else if (k === 'link'){ copyText(url, tx('Link copied', 'લિંક કૉપિ થઈ')); closeSheet(); }
-    else closeSheet();
-  };
-  if (typeof sheet.showModal === 'function'){ try { sheet.showModal(); } catch (e) { copyText(full, tx('Text copied', 'લખાણ કૉપિ થયું')); } }
-  else copyText(full, tx('Text copied', 'લખાણ કૉપિ થયું'));
+  const full = () => qaShareText(x) + '\n\n' + location.href.split('#')[0] + qHref(x);
+  showSheet(() => {
+    const txt = qaShareText(x), url = location.href.split('#')[0] + qHref(x), all = txt + '\n\n' + url;
+    const grid = document.getElementById('sheet-grid');
+    document.getElementById('sheet-ref').textContent = 'Question · ' + v.ref;
+    grid.innerHTML = shareButtons(all, !!navigator.share);
+    grid.onclick = async e => {
+      const b = e.target.closest('[data-sh]'); if (!b) return;
+      const k = b.dataset.sh;
+      if (k === 'native'){ try { await navigator.share({title: shareTitle(v), text: txt, url}); } catch (err) {} closeSheet(); }
+      else if (k === 'img'){ closeSheet(); shareQaImage(x); }
+      else if (k === 'text'){ copyText(all, 'Text copied'); closeSheet(); }
+      else if (k === 'link'){ copyText(url, 'Link copied'); closeSheet(); }
+      else closeSheet();
+    };
+  }, full);
 }
 function closeSheet(){ if (sheet.open) sheet.close(); }
 document.getElementById('sheet-close').addEventListener('click', closeSheet);
@@ -1339,7 +1368,7 @@ view.addEventListener('submit', e => {
 /* ---------- silent update ---------- */
 // The build writes its id into this page and into version.json. A page that finds a newer id in version.json
 // reloads by itself if the reader has not touched it yet; otherwise it offers a refresh.
-const BUILD_RAW = '40d8c62ae1f8', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
+const BUILD_RAW = 'ed1aedcdd241', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
 const openedAt = Date.now(); let touched = false, lastCheck = 0, updDismissed = null, updReady = null;
 ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, {passive: true, once: true}));
 const updBar = document.getElementById('updbar');
