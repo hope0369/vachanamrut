@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-03TEJFYPTifVtqllDTsfR3ZuJK+lY4C31RdgkIzMNAc='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-rnzW8ZrBRvVKkXjaLnxF1di0h68z9n5N8fGQvMrSBbY='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -1256,7 +1256,6 @@ let sheetDraw = null;   // redraws the open share sheet (a language change while
 const shareButtons = (full, native, text) =>
   (native ? '<button type="button" class="act primary" data-sh="native">' + icon('share') + 'Share…</button>' : '') +
   '<a class="act" data-sh="wa" href="https://wa.me/?text=' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
-  '<a class="act" data-sh="line" href="https://line.me/R/msg/text/?' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">LINE</a>' +
   '<button type="button" class="act" data-sh="img">As an image</button>' +
   (text === false ? '' : '<button type="button" class="act" data-sh="text">Copy text</button>') +
   '<button type="button" class="act" data-sh="link">Copy link</button>';
@@ -1370,7 +1369,7 @@ view.addEventListener('submit', e => {
 /* ---------- silent update ---------- */
 // The build writes its id into this page and into version.json. A page that finds a newer id in version.json
 // reloads by itself if the reader has not touched it yet; otherwise it offers a refresh.
-const BUILD_RAW = '727698d2fa30', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
+const BUILD_RAW = '4e35949b372c', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
 const openedAt = Date.now(); let touched = false, lastCheck = 0, updDismissed = null, updReady = null;
 ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, {passive: true, once: true}));
 const updBar = document.getElementById('updbar');
