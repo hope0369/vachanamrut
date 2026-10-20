@@ -2,7 +2,7 @@
 // discourse readable with no connection. The page opens from the cache straight away and is
 // refreshed in the background, so a new build shows on the next open.
 // Bump VERSION only when this file's caching logic changes, not for content updates.
-const VERSION = 'v1';
+const VERSION = 'v2';
 // Cache names start with vach- because hope0369.github.io is shared with other projects.
 const PAGE = 'vach-page-' + VERSION;
 const FONTS = 'vach-fonts-' + VERSION;
@@ -36,6 +36,14 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
 
+  // A request that asks for a fresh copy (the update check, or the reload after one) goes to the network first,
+  // and a fresh page replaces the offline copy so the next open is the new build.
+  if (url.origin === location.origin && (req.cache === 'no-store' || req.cache === 'reload')){
+    const key = url.pathname === new URL('./', location).pathname ? './' : req;
+    e.respondWith(fetch(req).then(res => { if (res.ok){ const copy = res.clone(); caches.open(PAGE).then(c => c.put(key, copy)); } return res; })
+      .catch(() => caches.open(PAGE).then(c => c.match(key)).then(hit => hit || Response.error())));
+    return;
+  }
   // Every page view is the same single-page app; routes live in the #hash.
   if (req.mode === 'navigate' && url.origin === location.origin){
     e.respondWith(staleWhileRevalidate(PAGE, req, './'));
