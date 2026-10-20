@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GsX/ij3b1POOYiDZvmFLFK6XN9E5/zgj5qcpqOAiRSQ='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wyyc6fQpSbC9zcLqyQpJr6PCUF+rr/TZ7WWE90UOoI0='; style-src 'sha256-Pp3wRB6odyxDflqqQQywq35E0WFi+RW4FuZWsGxs/3k=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -1120,6 +1120,111 @@ function copyText(txt, okMsg){
   };
   try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => flash(okMsg || tx('Copied', 'કૉપિ થયું')), fallback); else fallback(); } catch (e) { fallback(); }
 }
+/* ---------- share as a picture (for WhatsApp status and chats) ---------- */
+function wrapLines(ctx, text, maxW){
+  const out = [];
+  text.split(/\n+/).forEach(par => {
+    let line = '';
+    par.split(/\s+/).filter(Boolean).forEach(w => {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width <= maxW || !line) line = t; else { out.push(line); line = w; }
+    });
+    if (line) out.push(line);
+  });
+  return out;
+}
+const TILAK = [new Path2D('M6 36V18C6 10.3 12.3 4 20 4s14 6.3 14 14v18'), new Path2D('M13 36V19a7 7 0 0 1 14 0v17')];
+function drawTilak(ctx, cx, cy, size){
+  const k = size / 40; ctx.save(); ctx.translate(cx - 20 * k, cy + 20 * k); ctx.scale(k, -k);
+  ctx.lineCap = 'round'; ctx.lineWidth = 3;
+  ctx.strokeStyle = '#E8741E'; ctx.stroke(TILAK[0]); ctx.strokeStyle = '#F4A51C'; ctx.stroke(TILAK[1]);
+  ctx.restore(); ctx.fillStyle = '#A3142C'; ctx.beginPath(); ctx.arc(cx, cy, 2.6 * k, 0, Math.PI * 2); ctx.fill();
+}
+function roundRectPath(ctx, x, y, w, h, r){
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+const cardFont = (b, sz) => (b.i ? 'italic ' : '') + b.w + ' ' + sz + 'px "Rasa", "Noto Serif Gujarati", Georgia, serif';
+// Blocks of text (a question, then its answer) at the largest size where they all fit; if even the smallest is too
+// long, the last block is cut with "…" (the full text is one tap away on the site).
+function layoutBlocks(ctx, blocks, maxW, maxH, big, small){
+  const gap = 34, lh = 1.45;
+  const lay = base => blocks.map(b => { const sz = Math.round(base * b.k); ctx.font = cardFont(b, sz); return {b, sz, lines: wrapLines(ctx, b.text, maxW)}; });
+  const height = ls => ls.reduce((h, l) => h + l.lines.length * l.sz * lh, 0) + gap * (ls.length - 1);
+  for (let base = big; base >= small; base -= 2){ const ls = lay(base); if (height(ls) <= maxH) return {ls, base, h: height(ls), gap, lh}; }
+  const ls = lay(small); let cut = false;
+  while (height(ls) > maxH){
+    const last = ls[ls.length - 1];
+    if (last.lines.length > 1){ last.lines.pop(); cut = true; } else if (ls.length > 1) ls.pop(); else break;
+  }
+  if (cut){ const last = ls[ls.length - 1]; last.lines[last.lines.length - 1] = last.lines[last.lines.length - 1].replace(/\s*\S*$/, '') + ' …'; }
+  return {ls, base: small, h: height(ls), gap, lh};
+}
+// The card matches the site: cream paper, a thin frame, the tilak mark, the words as large as they fit.
+async function makeCard(sub, blocks, foot){
+  const W = 1080;
+  try { await Promise.all([document.fonts.load('500 48px "Rasa"'), document.fonts.load('italic 400 40px "Rasa"'), document.fonts.load('700 48px "Baloo Bhai 2"'), document.fonts.load('500 30px "Hind Vadodara"')]); } catch (e) {}
+  const c = document.createElement('canvas'); c.width = W; c.height = 1350; const ctx = c.getContext('2d');
+  const top = 350, maxW = W - 2 * 128;
+  let H = 1350, t = layoutBlocks(ctx, blocks, maxW, H - 230 - top, 64, 30);
+  // A long answer gets the tall Status/Story shape instead of text too small to read.
+  if (t.base < 40){ H = 1920; c.height = H; t = layoutBlocks(ctx, blocks, maxW, H - 230 - top, 64, 30); }
+  const bottom = H - 230;
+  ctx.fillStyle = '#FBF5EC'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#E3C9A4'; ctx.lineWidth = 3; roundRectPath(ctx, 40, 40, W - 80, H - 80, 28); ctx.stroke();
+  ctx.strokeStyle = '#EEDCC2'; ctx.lineWidth = 1.5; roundRectPath(ctx, 54, 54, W - 108, H - 108, 20); ctx.stroke();
+  drawTilak(ctx, W / 2, 140, 72);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#7A1F2B'; ctx.font = '700 46px "Baloo Bhai 2", "Hind Vadodara", sans-serif'; ctx.fillText('વચનામૃત', W / 2, 232);
+  ctx.fillStyle = '#9A6B4F'; ctx.font = '500 30px "Hind Vadodara", sans-serif'; ctx.fillText(sub, W / 2, 280);
+  ctx.fillStyle = '#E8741E'; ctx.fillRect(W / 2 - 36, 306, 72, 4);
+  let y = top + Math.max(0, (bottom - top - t.h) / 2);
+  t.ls.forEach((l, i) => {
+    if (i) y += t.gap;
+    ctx.fillStyle = l.b.c; ctx.font = cardFont(l.b, l.sz);
+    l.lines.forEach(line => { y += l.sz * t.lh; ctx.fillText(line, W / 2, y - l.sz * 0.38); });
+  });
+  if (foot){ ctx.fillStyle = '#9A6B4F'; ctx.font = '500 32px "Hind Vadodara", sans-serif'; ctx.fillText(foot, W / 2, Math.min(y + 78, H - 150)); }
+  ctx.font = '500 26px "Hind Vadodara", sans-serif'; ctx.fillStyle = '#B08C72';
+  const site = /^https?:$/.test(location.protocol) ? location.host + location.pathname.replace(/index\.html$/, '') : 'Vachanamrut';
+  ctx.fillText(site.replace(/\/$/, ''), W / 2, H - 92);
+  return await new Promise(res => c.toBlob(b => res(b), 'image/png'));
+}
+let imageBusy = false;   // one image share at a time: a quick second tap must not send a second copy
+async function shareCard(name, build){
+  if (imageBusy) return; imageBusy = true;
+  try {
+    flash(tx('Making the image…', 'ચિત્ર બને છે…'));
+    let blob; try { blob = await build(); } catch (e) { blob = null; }
+    if (!blob){ flash(tx('Could not make the image in this browser.', 'આ બ્રાઉઝરમાં ચિત્ર બનાવી શકાયું નહીં.')); return; }
+    try {
+      const file = new File([blob], name, {type: 'image/png'});
+      // The file alone, with no title: iPhone Safari passes a title as a second item and WhatsApp then shows the image twice.
+      if (navigator.canShare && navigator.canShare({files: [file]})){ await navigator.share({files: [file]}); return; }
+    } catch (e) {
+      // cancelled, or a share sheet is already open: stop here rather than also saving a copy
+      if (e && (e.name === 'AbortError' || e.name === 'InvalidStateError')) return;
+    }
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    flash(tx('Image saved', 'ચિત્ર સાચવ્યું'));
+  } finally { imageBusy = false; }
+}
+const INK = '#2B1A12', SOFT = '#6A4A38';
+function qaImage(x){
+  const v = V[x.i], l = qLang(x), ps = answerParas(x) || [];
+  const q = plain(l === 'gu' ? x.qg : l === 'tr' ? x.qt : x.q).trim();
+  const who = byMaharaj(x) ? (l === 'gu' ? 'શ્રીજીમહારાજે પૂછ્યું' : 'Asked by Shriji Maharaj') : l === 'gu' && x.whog ? 'પૂછનાર: ' + x.whog : 'Asked by ' + x.who;
+  const blocks = [{text: q, w: 600, k: 1, c: INK}];
+  if (ps.length) blocks.push({text: ps.join('\n'), w: 400, k: 0.8, c: SOFT});
+  return makeCard(l === 'gu' ? v.refg : v.ref, blocks, '— ' + who);
+}
+function shareQaImage(x){ return shareCard('vachanamrut-q-' + V[x.i].key + '.png', () => qaImage(x)); }
+function shareDiscImage(v){
+  const blocks = [{text: v.tg, w: 600, k: 1, c: INK}]; if (show !== 'gu') blocks.push({text: v.t, w: 400, i: true, k: 0.62, c: SOFT});
+  return shareCard('vachanamrut-' + v.key + '.png', () => makeCard(show === 'gu' ? v.refg : v.ref, blocks, ''));
+}
+
 const shareUrl = v => location.href.split('#')[0] + vHref(v);
 const shareText = v => 'વચનામૃત ' + v.refg + ': ' + v.tg + '\nVachanamrut ' + v.ref + ': ' + v.t;
 const sheet = document.getElementById('sheet');
@@ -1127,6 +1232,7 @@ const shareButtons = (full, native, text) =>
   (native ? '<button type="button" class="act primary" data-sh="native"' + lgA() + '>' + icon('share') + tx('Share…', 'મોકલો…') + '</button>' : '') +
   '<a class="act" data-sh="wa" href="https://wa.me/?text=' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
   '<a class="act" data-sh="line" href="https://line.me/R/msg/text/?' + encodeURIComponent(full) + '" target="_blank" rel="noopener noreferrer">LINE</a>' +
+  '<button type="button" class="act" data-sh="img"' + lgA() + '>' + tx('As an image', 'ચિત્ર તરીકે') + '</button>' +
   (text === false ? '' : '<button type="button" class="act" data-sh="text"' + lgA() + '>' + tx('Copy text', 'લખાણ કૉપિ કરો') + '</button>') +
   '<button type="button" class="act" data-sh="link"' + lgA() + '>' + tx('Copy link', 'લિંક કૉપિ કરો') + '</button>';
 function openShare(v){
@@ -1138,6 +1244,8 @@ function openShare(v){
     const b = e.target.closest('[data-sh]'); if (!b) return;
     const k = b.dataset.sh;
     if (k === 'native'){ try { await navigator.share({title: 'Vachanamrut ' + v.ref, text: txt, url}); } catch (err) {} closeSheet(); }
+    else if (k === 'img'){ closeSheet(); shareDiscImage(v); }
+    else if (k === 'img'){ closeSheet(); shareQaImage(x); }
     else if (k === 'link'){ copyText(url, tx('Link copied', 'લિંક કૉપિ થઈ')); closeSheet(); }
     else closeSheet();
   };
@@ -1231,7 +1339,7 @@ view.addEventListener('submit', e => {
 /* ---------- silent update ---------- */
 // The build writes its id into this page and into version.json. A page that finds a newer id in version.json
 // reloads by itself if the reader has not touched it yet; otherwise it offers a refresh.
-const BUILD_RAW = '5249edefbd00', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
+const BUILD_RAW = '40d8c62ae1f8', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
 const openedAt = Date.now(); let touched = false, lastCheck = 0, updDismissed = null, updReady = null;
 ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, {passive: true, once: true}));
 const updBar = document.getElementById('updbar');
