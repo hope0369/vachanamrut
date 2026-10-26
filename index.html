@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-NjRtchRi2fIB9fvZLJnNJE7ZD/ytwJztxh9ft8631s8='; style-src 'sha256-gTREwJ9Pum+M2SgDlTC7tyV8QpNi1i3uGGIB3MzuVIY=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-dXtA8iLtrVXZwrbBT4HON8cxTbhhscJ3h11LdJzcZgM='; style-src 'sha256-16y5CUXbNLsj5JTeXXD6sEGr41mEGwjs4Zyt5SsAIMU=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -143,6 +143,15 @@ h1 .pre,h2 .pre{display:block;font-family:var(--sans);font-size:.85rem;font-weig
 .today .kicker{display:flex;align-items:center;gap:8px;font:600 .78rem/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--saffron-deep);margin-bottom:10px}
 .another{margin-top:12px;background:var(--surface);border-color:transparent}
 .today .kicker i{width:8px;height:8px;border-radius:50%;background:var(--kumkum);display:inline-block}
+/* Home: the greeting sits straight on the page so the vat is the only box (no box inside a box). */
+.hero,.hero.plain{background:none;border:0;box-shadow:none;padding:0;overflow:visible;color:var(--ink)}
+.hero::before{display:none}
+.hero .greet{text-shadow:none}
+.hero .greet-2{color:var(--saffron-deep)}
+.hero .greet-sub{color:var(--muted);margin:8px 0 14px}
+.hero .guru-name{color:var(--ink);text-shadow:none}
+.today{border:1px solid var(--rule);box-shadow:var(--shadow)}
+.another{background:transparent;border-color:var(--rule)}
 
 /* ---------- Feelings ---------- */
 .moods{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px}
@@ -1383,7 +1392,7 @@ view.addEventListener('submit', e => {
 /* ---------- silent update ---------- */
 // The build writes its id into this page and into version.json. A page that finds a newer id in version.json
 // reloads by itself if the reader has not touched it yet; otherwise it offers a refresh.
-const BUILD_RAW = '5d45b5908a0c', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
+const BUILD_RAW = '8906d128bc52', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
 const openedAt = Date.now(); let touched = false, lastCheck = 0, updDismissed = null, updReady = null;
 ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, {passive: true, once: true}));
 const updBar = document.getElementById('updbar');
