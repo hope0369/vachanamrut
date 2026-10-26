@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-bEDPtRSioTnr60jhD+i9XUS6ISEidgdjhCFa5jekeBI='; style-src 'sha256-xKkrycpF81nQhpX/c9rsKLaf9i58CGwyhE8VkiBHy/g=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-NjRtchRi2fIB9fvZLJnNJE7ZD/ytwJztxh9ft8631s8='; style-src 'sha256-gTREwJ9Pum+M2SgDlTC7tyV8QpNi1i3uGGIB3MzuVIY=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#170E0A" media="(prefers-color-scheme: dark)">
@@ -281,7 +281,8 @@ body.lang-en .vat .gu:not(.always),body.lang-en .deck-card .gu:not(.always){disp
 /* ---------- Share sheet ---------- */
 dialog.sheet{border:0;border-radius:24px;padding:0;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0 / 35%);width:min(420px,calc(100vw - 32px))}
 dialog.sheet::backdrop{background:rgb(20 8 2 / 45%)}
-.sheet-in{padding:20px}
+/* The Aa and share cards stay at 100%: the text-size setting only resizes the reading pages. */
+.sheet-in{padding:calc(20px * var(--scale));zoom:calc(1 / var(--scale))}
 .sheet h3{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
 .sheet p{margin:0 0 14px;color:var(--muted);font:.9rem/1.4 var(--sans)}
 .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -290,6 +291,19 @@ dialog.sheet::backdrop{background:rgb(20 8 2 / 45%)}
 .sizerow{display:flex;align-items:center;gap:16px;margin:0 0 18px}
 .sheet .langsw{margin:0 0 18px}
 #size-val{min-width:4ch}
+/* The zoom above cancels the text size for rem-based sizes; these px sizes are scaled back up so the card keeps its 100% look. */
+.sheet .act{min-height:calc(44px * var(--scale));padding:calc(11px * var(--scale)) calc(16px * var(--scale))}
+.sheet .sheet-grid .act{padding:calc(13px * var(--scale)) calc(12px * var(--scale))}
+.sheet .act svg{width:calc(16px * var(--scale));height:calc(16px * var(--scale))}
+.sheet .langsw label{min-height:calc(44px * var(--scale));padding:calc(9px * var(--scale)) calc(13px * var(--scale))}
+.sheet .round{width:calc(52px * var(--scale));height:calc(52px * var(--scale))}
+.sheet .round svg{width:calc(22px * var(--scale));height:calc(22px * var(--scale))}
+.sheet h3{margin-bottom:calc(4px * var(--scale))}
+.sheet p{margin-bottom:calc(14px * var(--scale))}
+.sheet-grid{gap:calc(8px * var(--scale))}
+.sheet .sheet-close{margin-top:calc(12px * var(--scale))}
+.sheet .sizerow{gap:calc(16px * var(--scale));margin-bottom:calc(18px * var(--scale))}
+.sheet .langsw{margin-bottom:calc(18px * var(--scale))}
 .status{position:fixed;left:50%;bottom:calc(var(--nav-h) + 18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);font:500 .9rem/1 var(--sans);padding:12px 16px;border-radius:999px;z-index:60;box-shadow:var(--shadow)}
 
 footer{border-top:1px solid var(--rule);padding-block:24px 32px;font:.85rem/1.55 var(--sans);color:var(--muted)}
@@ -1369,7 +1383,7 @@ view.addEventListener('submit', e => {
 /* ---------- silent update ---------- */
 // The build writes its id into this page and into version.json. A page that finds a newer id in version.json
 // reloads by itself if the reader has not touched it yet; otherwise it offers a refresh.
-const BUILD_RAW = '75a8bbbf0ba8', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
+const BUILD_RAW = '5d45b5908a0c', BUILD = /^[0-9a-f]{12}$/.test(BUILD_RAW) ? BUILD_RAW : '', NO_UPDATE = false;
 const openedAt = Date.now(); let touched = false, lastCheck = 0, updDismissed = null, updReady = null;
 ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, {passive: true, once: true}));
 const updBar = document.getElementById('updbar');
